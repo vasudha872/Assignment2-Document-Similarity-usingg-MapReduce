@@ -1,6 +1,7 @@
 # Assignment 2: Document Similarity using MapReduce
 
 **Name:** 
+
 **Student ID:** 
 
 ## Approach and Implementation
