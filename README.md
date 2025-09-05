@@ -57,12 +57,18 @@ cat output/small_output/part-r-00000
 [Describe any challenges you faced during this assignment. This could be related to the algorithm design (e.g., how to generate pairs), implementation details (e.g., data structures, debugging in Hadoop), or environmental issues. Explain how you overcame these challenges.]
 
 ---
+## Sample Input
 
+**Input from `small_dataset.txt`**
+```
+Document1 This is a sample document containing words
+Document2 Another document that also has words
+Document3 Sample text with different words
+```
 ## Sample Output
 
 **Output from `small_dataset.txt`**
 ```
-# Paste a small sample of your program's output here
 "Document1, Document2 Similarity: 0.56"
 "Document1, Document3 Similarity: 0.42"
 "Document2, Document3 Similarity: 0.50"
