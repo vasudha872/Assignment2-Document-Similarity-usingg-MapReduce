@@ -19,7 +19,7 @@
 
 ## Setup and Execution
 
-### Note: The below commands are the ones used for the Hands-on. You need to edit these commands appropriately towards your Assignment to avoid errors.
+### ` Note: The below commands are the ones used for the Hands-on. You need to edit these commands appropriately towards your Assignment to avoid errors. `
 
 ### 1. **Start the Hadoop Cluster**
 
