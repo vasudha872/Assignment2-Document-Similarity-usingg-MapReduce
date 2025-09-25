@@ -1,19 +1,30 @@
 # Assignment 2: Document Similarity using MapReduce
 
-**Name:** 
+**Name:*Vasudha Maganti* 
 
-**Student ID:** 
+**Student ID:*801419675* 
 
 ## Approach and Implementation
 
 ### Mapper Design
-[Explain the logic of your Mapper class. What is its input key-value pair? What does it emit as its output key-value pair? How does it help in solving the overall problem?]
+Input: Each line of a document (document ID and words).
+
+Logic: The mapper tokenizes the words and emits intermediate key-value pairs representing document IDs and words.
+
+Output: Document ID as the key and words (comma-separated) as the value.
 
 ### Reducer Design
-[Explain the logic of your Reducer class. What is its input key-value pair? How does it process the values for a given key? What does it emit as the final output? How do you calculate the Jaccard Similarity here?]
+Input: Key = Document pair, Values = word sets.
+
+Logic: For each pair of documents, the reducer calculates the intersection and union of words.
+
+Output: Key = (doc1, doc2), Value = Jaccard similarity score (intersection / union).
 
 ### Overall Data Flow
-[Describe how data flows from the initial input files, through the Mapper, shuffle/sort phase, and the Reducer to produce the final output.]
+Input datasets (ds1.txt, ds2.txt, ds3.txt) are uploaded into HDFS.
+Mapper reads and emits document-word sets.
+Shuffle & sort groups words by document pairs.
+Reducer calculates Jaccard similarity for each pair and writes results into HDFS output.
 
 ---
 
@@ -42,7 +53,7 @@ mvn clean package
 Copy the JAR file to the Hadoop ResourceManager container:
 
 ```bash
-docker cp target/WordCountUsingHadoop-0.0.1-SNAPSHOT.jar resourcemanager:/opt/hadoop-3.2.1/share/hadoop/mapreduce/
+docker cp target/DocumentSimilarity-0.0.1-SNAPSHOT.jar resourcemanager:/opt/hadoop-3.2.1/share/hadoop/mapreduce/
 ```
 
 ### 5. **Move Dataset to Docker Container**
@@ -86,7 +97,7 @@ hadoop fs -put ./input.txt /input/data
 Run your MapReduce job using the following command: Here I got an error saying output already exists so I changed it to output1 instead as destination folder
 
 ```bash
-hadoop jar /opt/hadoop-3.2.1/share/hadoop/mapreduce/WordCountUsingHadoop-0.0.1-SNAPSHOT.jar com.example.controller.Controller /input/data/input.txt /output1
+hadoop jar /opt/hadoop-3.2.1/share/hadoop/mapreduce/DocumentSimilarity-0.0.1-SNAPSHOT.jar com.example.controller.DocumentSimilarityDriver /input/data/input.txt /output1
 ```
 
 ### 9. **View the Output**
@@ -120,8 +131,34 @@ To copy the output from HDFS to your local machine:
 
 ## Challenges and Solutions
 
-[Describe any challenges you faced during this assignment. This could be related to the algorithm design (e.g., how to generate pairs), implementation details (e.g., data structures, debugging in Hadoop), or environmental issues. Explain how you overcame these challenges.]
+ClassNotFoundException when Running the JAR
 
+Challenge: When I executed the Hadoop job, I encountered a ClassNotFoundException error. This usually happens when Hadoop cannot locate the driver, mapper, or reducer class inside the JAR.
+
+Cause: My pom.xml initially did not specify the correct Main-Class in the manifest, and sometimes the fully qualified class name in the run command didn’t match the package structure.
+
+Solution:
+
+I rebuilt the project with Maven to generate an updated JAR (mvn clean package).
+
+I verified the JAR contents using jar tf target/<jar-name>.jar to ensure the classes (com.example.controller.DocumentSimilarityDriver, DocumentSimilarityMapper, DocumentSimilarityReducer) were included.
+
+I corrected the Hadoop execution command to match the exact package and class name:
+```bash
+   hadoop jar DocumentSimilarity-0.0.1-SNAPSHOT.jar com.example.controller.DocumentSimilarityDriver /input/data/input.txt /output1
+
+   ```
+Output Directory Errors
+
+Challenge: Hadoop failed when the output directory already existed.
+
+Solution: Deleted the directory with hadoop fs -rm -r /output1 or changed the output path to /output2.
+
+Path Handling in Docker and HDFS
+
+Challenge: Input files sometimes existed in the container filesystem but not in HDFS.
+
+Solution: Verified paths carefully with hadoop fs -ls /input/data and always copied datasets into HDFS using hadoop fs -put.
 ---
 ## Sample Input
 
@@ -132,11 +169,17 @@ Document2 Another document that also has words
 Document3 Sample text with different words
 ```
 ## Sample Output
+```
+(Document1, Document2 Similarity: 0.56)
+(Document1, Document3 Similarity: 0.42)
+(Document2, Document3 Similarity: 0.50)
+```
 
 **Output from `small_dataset.txt`**
-```
-"Document1, Document2 Similarity: 0.56"
-"Document1, Document3 Similarity: 0.42"
-"Document2, Document3 Similarity: 0.50"
-```
+
 ## Obtained Output: (Place your obtained output here.)
+```
+many, the Similarity: .54	
+in, the Similarity: .19	
+in, many Similarity: .48
+```
