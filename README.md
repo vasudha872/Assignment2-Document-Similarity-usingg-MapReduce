@@ -154,6 +154,13 @@ Challenge: Hadoop failed when the output directory already existed.
 
 Solution: Deleted the directory with hadoop fs -rm -r /output1 or changed the output path to /output2.
 
+Challenge: classNotfoundexception
+
+Solution: added a java folder inside src folder 
+
+Path Handling in Docker and HDFS
+
+
 Path Handling in Docker and HDFS
 
 Challenge: Input files sometimes existed in the container filesystem but not in HDFS.
@@ -179,7 +186,14 @@ Document3 Sample text with different words
 
 ## Obtained Output: (Place your obtained output here.)
 ```
-many, the Similarity: .54	
-in, the Similarity: .19	
-in, many Similarity: .48
+Document2, Document3 Similarity: .54	
+Document1, Document3 Similarity: .19	
+Document1, Document2 Similarity: .48	
 ```
+
+## Observation
+
+dataNode1: Is the output for the 1st datanode
+
+dataNode3: Is the output of all three datanodes together
+
